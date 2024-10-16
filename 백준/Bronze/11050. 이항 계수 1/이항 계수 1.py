@@ -1,7 +1,4 @@
-def fac(n):
-    if n == 0:
-        return 1
-    return n*fac(n-1)
-
+from itertools import combinations
 n, k = map(int, input().split())
-print(fac(n) // (fac(k) * fac(n-k)))
+l = [i for i in range(n)]
+print(len(list(combinations(l, k))))
