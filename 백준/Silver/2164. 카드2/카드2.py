@@ -1,11 +1,12 @@
-input  = int(input())
-sq = 2
+from collections import deque
 
-while(1):
-    if (input == 1 or input == 2):
-        print(input)
-        break
-    sq *= 2
-    if(sq >= input):
-        print((input - (sq // 2)) * 2)
-        break
+n = int(input())
+
+queue = deque([i for i in range(1, n+1)])
+
+while (len(queue)>1):
+    queue.popleft()
+    plus=queue.popleft()
+    queue.append(plus)
+    
+print(queue[0])
