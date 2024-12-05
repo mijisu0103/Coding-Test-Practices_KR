@@ -1,40 +1,44 @@
 import sys
+input = sys.stdin.readline
+sys.setrecursionlimit(10**9)
 
-sudoku = []
-for i in range(9):
-    sudoku.append(list(map(int, sys.stdin.readline().split())))
-zeros = [(i, j) for i in range(9) for j in range(9) if sudoku[i][j] == 0]
+sudoku_grid = []
 
+for row in range(9):
+    sudoku_grid.append(list(map(int, input().split())))
 
-def find(row, col):
-    missing_numbers=[1, 2, 3, 4, 5, 6, 7, 8, 9]
-    for k in range(9):
-        if sudoku[row][k] in missing_numbers:
-            missing_numbers.remove(sudoku[row][k])
-        if sudoku[k][col] in missing_numbers:
-            missing_numbers.remove(sudoku[k][col])
-    r_str = row//3 * 3
-    c_str = col//3 * 3
-    for i in range(r_str, r_str+3):
-        for j in range(c_str, c_str+3):
-            if sudoku[i][j] in missing_numbers:
-                missing_numbers.remove(sudoku[i][j])
-    return missing_numbers
+row_used = [[False] * 10 for _ in range(9)]
+col_used = [[False] * 10 for _ in range(9)]
+subgrid_used = [[False] * 10 for _ in range(9)]
 
+for row in range(9):
+    for col in range(9):
+        if sudoku_grid[row][col] != 0:
+            number = sudoku_grid[row][col]
+            row_used[row][number] = True
+            col_used[col][number] = True
+            subgrid_index = 3 * (row // 3) + (col // 3)
+            subgrid_used[subgrid_index][number] = True
 
-def dfs(idx):
-    if idx == len(zeros):
-        for row in sudoku:
-            print(*row)
-        exit()
+def solve_sudoku(cell_index):
+    if cell_index == 81:
+        for row in sudoku_grid:
+            print(" ".join(map(str, row)))
+        sys.exit()
 
+    row = cell_index // 9
+    col = cell_index % 9
+
+    if sudoku_grid[row][col] != 0:
+        solve_sudoku(cell_index + 1)
     else:
-        row, col = zeros[idx]
-        missing = find(row, col)
-        for number in missing:
-            sudoku[row][col] = number
-            dfs(idx+1)
-            sudoku[row][col] = 0
+        for num in range(1, 10):
+            subgrid_index = 3 * (row // 3) + (col // 3)
+            if not row_used[row][num] and not col_used[col][num] and not subgrid_used[subgrid_index][num]:
+                row_used[row][num] = col_used[col][num] = subgrid_used[subgrid_index][num] = True
+                sudoku_grid[row][col] = num
+                solve_sudoku(cell_index + 1)
+                sudoku_grid[row][col] = 0
+                row_used[row][num] = col_used[col][num] = subgrid_used[subgrid_index][num] = False
 
-
-dfs(0)
+solve_sudoku(0)
