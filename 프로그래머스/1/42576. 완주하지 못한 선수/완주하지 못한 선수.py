@@ -1,12 +1,13 @@
 def solution(participant, completion):
-    hash_dict = dict()
+    
+    hashDict = {}
     sumHash = 0
     
     for part in participant:
-        hash_dict[hash(part)] = part
+        hashDict[hash(part)] = part
         sumHash += hash(part)
-        
+    
     for comp in completion:
         sumHash -= hash(comp)
-        
-    return hash_dict[sumHash]
+    
+    return hashDict[sumHash]
